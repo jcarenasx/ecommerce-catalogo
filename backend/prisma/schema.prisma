@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String?
+  phone        String?
+  passwordHash String
+  role         UserRole   @default(USER)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  cartItems    CartItem[]
+  orders       Order[]
+}
+
+model Product {
+  model                      String     @id @map("modelo")
+  name                       String
+  sku                        String?    @map("sku")
+  size                       String?    @map("talla")
+  color                      String?    @map("color")
+  category                   String?    @map("categoria")
+  brand                      String?    @map("marca")
+  priceCents                 Int?
+  paymentLinkWithShipping    String?
+  paymentLinkWithoutShipping String?
+  images                     String[]   @default([])
+  active                     Boolean    @default(true)
+  createdAt                  DateTime   @default(now())
+  updatedAt                  DateTime   @updatedAt
+
+  cartItems                  CartItem[]
+}
+
+model CartItem {
+  id         String   @id @default(cuid())
+  userId     String
+  productModel String
+  quantity   Int      @default(1)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productModel], references: [model], onDelete: Cascade)
+
+  @@unique([userId, productModel])
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  userId     String
+  status     OrderStatus @default(PENDING)
+  totalCents Int
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items      OrderItem[]
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  productId  Int
+  name       String
+  priceCents Int
+  quantity   Int
+  createdAt  DateTime @default(now())
+
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}

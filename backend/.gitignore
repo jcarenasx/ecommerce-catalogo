@@ -1,0 +1,13 @@
+# Ignorar librerías de ambos
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Ignorar compilaciones y secretos
+dist/
+build/
+.env
+.DS_Store
+
+# Logs
+*.log
