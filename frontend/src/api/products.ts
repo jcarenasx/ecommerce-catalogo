@@ -1,4 +1,4 @@
-import client from "./client";
+import { api } from "../lib/api";
 import type { Product } from "../types";
 
 const PRODUCTS_BASE_PATH = "/products";
@@ -36,7 +36,7 @@ export async function fetchProducts(
     params.offset = String(offset);
   }
 
-  const response = await client.get<ProductsApiResponse>(PRODUCTS_BASE_PATH, {
+  const response = await api.get<ProductsApiResponse>(PRODUCTS_BASE_PATH, {
     ...(Object.keys(params).length > 0 ? { params } : {}),
   });
 
@@ -45,7 +45,7 @@ export async function fetchProducts(
 
 export async function fetchProductCategories(includeInactive = false): Promise<string[]> {
   const params = includeInactive ? { includeInactive: "true" } : undefined;
-  const response = await client.get<{ categories: string[] }>(`${PRODUCTS_BASE_PATH}/categories`, {
+  const response = await api.get<{ categories: string[] }>(`${PRODUCTS_BASE_PATH}/categories`, {
     params,
   });
   return response.data.categories;
@@ -53,7 +53,7 @@ export async function fetchProductCategories(includeInactive = false): Promise<s
 
 export async function fetchProductBrands(includeInactive = false): Promise<string[]> {
   const params = includeInactive ? { includeInactive: "true" } : undefined;
-  const response = await client.get<{ brands: string[] }>(`${PRODUCTS_BASE_PATH}/brands`, {
+  const response = await api.get<{ brands: string[] }>(`${PRODUCTS_BASE_PATH}/brands`, {
     params,
   });
   return response.data.brands;

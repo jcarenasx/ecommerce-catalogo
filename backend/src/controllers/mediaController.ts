@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { mediaService } from "../services/mediaService";
+import { mediaService } from "../services/mediaService.js";
 
 export const mediaController = {
   async upload(req: Request, res: Response, next: NextFunction) {

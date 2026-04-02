@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { requireAdmin } from "../middleware/requireAdmin";
-import { requireAuth } from "../middleware/requireAuth";
-import { availabilityTagController } from "../controllers/availabilityTagController";
+import { requireAdmin } from "../middleware/requireAdmin.js";
+import { requireAuth } from "../middleware/requireAuth.js";
+import { availabilityTagController } from "../controllers/availabilityTagController.js";
 
 const router = Router();
 

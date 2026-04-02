@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import type { Request, Response } from "express";
-import { env } from "./env";
+import { env } from "./env.js";
 
 const ACCESS_TOKEN_TTL = "8h";
 const ACCESS_COOKIE_MAX_AGE_MS = 8 * 60 * 60 * 1000;

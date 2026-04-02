@@ -1,5 +1,5 @@
 import type { NextFunction, Response } from "express";
-import type { AuthedRequest } from "../auth";
+import type { AuthedRequest } from "../auth.js";
 
 export function requireAdmin(
   req: AuthedRequest,

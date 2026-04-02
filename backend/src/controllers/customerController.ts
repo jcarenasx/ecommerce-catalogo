@@ -1,50 +1,25 @@
 import type { Request, Response, NextFunction } from "express";
-import { z } from "zod";
-import { customerService } from "../services/customerService";
+import type { CreateCustomerInput } from "../middleware/validateCustomer.js";
+import { customerService } from "../services/customerService.js";
 
-const createSchema = z.object({
-  name: z.string().trim().min(1),
-  phone: z.string().trim().min(1),
-});
+type CustomerCreateRequest = Request<Record<string, never>, unknown, CreateCustomerInput>;
 
 export const customerController = {
-  async create(req: Request, res: Response, next: NextFunction) {
+  async create(req: CustomerCreateRequest, res: Response, next: NextFunction) {
     try {
-      console.log("Customer payload:", req.body);
-      const parsed = createSchema.safeParse(req.body);
-      console.log("Parsed payload:", parsed);
-      if (!parsed.success) {
-        return res.status(400).json({
-          error: "INVALID_BODY",
-          message: "El cuerpo no cumple la validación mínima.",
-          details: parsed.error.format(),
-        });
-      }
-
-      const customer = await customerService.create(parsed.data);
+      const customer = await customerService.create(req.body);
       return res.status(201).json({ customer });
     } catch (error) {
-      console.error("Failed to create customer", error);
-      const message =
-        error instanceof Error ? error.message : "Ocurrió un error creando el cliente.";
-      return res.status(500).json({
-        error: "CUSTOMER_CREATION_FAILED",
-        message,
-      });
+      next(error);
     }
   },
+
   async list(_req: Request, res: Response, next: NextFunction) {
     try {
       const customers = await customerService.list();
       return res.json({ customers });
     } catch (error) {
-      console.error("Failed to list customers", error);
-      const message =
-        error instanceof Error ? error.message : "Ocurrió un error obteniendo los clientes.";
-      return res.status(500).json({
-        error: "CUSTOMER_LIST_FAILED",
-        message,
-      });
+      next(error);
     }
   },
 };

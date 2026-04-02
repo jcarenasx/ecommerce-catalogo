@@ -1,7 +1,8 @@
-import { customerRepository } from "../repositories/customerRepository";
+import type { CreateCustomerInput } from "../middleware/validateCustomer.js";
+import { customerRepository } from "../repositories/customerRepository.js";
 
 export const customerService = {
-  async create(input: { name: string; phone: string }) {
+  async create(input: CreateCustomerInput) {
     return customerRepository.create(input);
   },
 

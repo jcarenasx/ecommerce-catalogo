@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { z } from "zod";
-import { availabilityTagService } from "../services/availabilityTagService";
+import { availabilityTagService } from "../services/availabilityTagService.js";
 
 const createSchema = z.object({
   name: z.string().trim().min(1),

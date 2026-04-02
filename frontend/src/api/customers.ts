@@ -1,4 +1,4 @@
-import client from "./client";
+import { api } from "../lib/api";
 
 export type CustomerRecord = {
   id: string;
@@ -13,10 +13,10 @@ export type CustomerPayload = {
 };
 
 export async function fetchCustomers(): Promise<CustomerRecord[]> {
-  const response = await client.get<{ customers: CustomerRecord[] }>("/customers");
+  const response = await api.get<{ customers: CustomerRecord[] }>("/customers");
   return response.data.customers;
 }
 
 export async function createCustomer(payload: CustomerPayload): Promise<void> {
-  await client.post("/customers", payload);
+  await api.post("/customers", payload);
 }

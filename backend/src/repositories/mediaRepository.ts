@@ -1,7 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
-import { config } from "../config";
+import type { Express } from "express";
+import { config } from "../config/index.js";
 
 const ensureUploadsDirectory = () => {
   const uploadPath = path.resolve(process.cwd(), config.uploadDirectory);

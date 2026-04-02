@@ -1,11 +1,11 @@
 import type { Express } from "express";
 import type { Prisma } from "@prisma/client";
-import type { ProductInput } from "../types";
-import { mediaRepository } from "../repositories/mediaRepository";
+import type { ProductInput } from "../types.js";
+import { mediaRepository } from "../repositories/mediaRepository.js";
 import {
   productRepository,
   type ProductFindManyOptions,
-} from "../repositories/productRepository";
+} from "../repositories/productRepository.js";
 
 function normalizeImageUrls(images?: string[] | null): string[] {
   const filtered = (images ?? []).filter((url) => typeof url === "string" && url.trim() !== "");
@@ -61,7 +61,7 @@ export const productService = {
 
   async create(input: ProductInput, files?: Express.Multer.File[]) {
     const images = await processImages(input.images, files);
-    const payload = {
+    const payload: Prisma.ProductUncheckedCreateInput = {
       name: input.name ?? input.model,
       size: input.size ?? null,
       color: input.color ?? null,
@@ -81,7 +81,7 @@ export const productService = {
 
   async update(model: string, input: ProductInput, files?: Express.Multer.File[]) {
     const images = await processImages(input.images, files);
-    const updatePayload: Prisma.ProductUpdateInput = {
+    const updatePayload: Prisma.ProductUncheckedUpdateInput = {
       name: input.name ?? input.model,
       model: input.model,
       size: input.size ?? null,

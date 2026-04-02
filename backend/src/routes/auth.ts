@@ -7,10 +7,10 @@ import {
   clearAuthCookie,
   setAuthCookie,
   signAccessToken,
-} from "../auth";
-import { prisma } from "../prisma";
-import { requireAuth } from "../middleware/requireAuth";
-import type { PublicUser, User } from "../types";
+} from "../auth.js";
+import { prisma } from "../prisma.js";
+import { requireAuth } from "../middleware/requireAuth.js";
+import type { PublicUser, User } from "../types.js";
 
 const router = Router();
 

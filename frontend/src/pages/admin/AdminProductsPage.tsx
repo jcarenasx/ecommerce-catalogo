@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import { ApiError } from "../../api/client";
+import { ApiError } from "../../lib/api";
 import Button from "../../components/ui/Button";
 import Loader from "../../components/ui/Loader";
 import Pill from "../../components/ui/Pill";

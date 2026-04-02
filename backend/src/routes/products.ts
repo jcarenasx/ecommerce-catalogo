@@ -1,13 +1,13 @@
 import { Router } from "express";
 import multer from "multer";
-import { config } from "../config";
-import { requireAuth } from "../middleware/requireAuth";
-import { requireAdmin } from "../middleware/requireAdmin";
+import { config } from "../config/index.js";
+import { requireAuth } from "../middleware/requireAuth.js";
+import { requireAdmin } from "../middleware/requireAdmin.js";
 import {
   validateProductCreate,
   validateProductUpdate,
-} from "../middleware/validateProduct";
-import { productsController } from "../controllers/productsController";
+} from "../middleware/validateProduct.js";
+import { productsController } from "../controllers/productsController.js";
 
 const router = Router();
 const upload = multer({

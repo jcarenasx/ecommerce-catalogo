@@ -1,7 +1,7 @@
 import type { NextFunction, Response } from "express";
-import { env } from "../env";
-import type { AuthedRequest } from "../auth";
-import { clearAuthCookie, verifyAccessToken } from "../auth";
+import { env } from "../env.js";
+import type { AuthedRequest } from "../auth.js";
+import { clearAuthCookie, verifyAccessToken } from "../auth.js";
 
 export function requireAuth(req: AuthedRequest, res: Response, next: NextFunction) {
   const token = req.cookies?.[env.COOKIE_NAME];

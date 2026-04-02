@@ -1,4 +1,4 @@
-import { prisma } from "../prisma";
+import { prisma } from "../prisma.js";
 
 export const customerRepository = {
   create(data: { name: string; phone: string }) {

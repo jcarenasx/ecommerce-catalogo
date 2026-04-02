@@ -1,5 +1,5 @@
-import { prisma } from "../prisma";
-import type { Product, Prisma } from "@prisma/client";
+import { prisma } from "../prisma.js";
+import { Prisma } from "@prisma/client";
 
 export type ProductFindManyOptions = {
   category?: string;
@@ -10,7 +10,15 @@ export type ProductFindManyOptions = {
   offset?: number;
 };
 
-function normalizeProduct(product: Product): Product {
+const defaultProductInclude = {
+  availabilityTag: true,
+} satisfies Prisma.ProductInclude;
+
+export type ProductRecord = Prisma.ProductGetPayload<{
+  include: typeof defaultProductInclude;
+}>;
+
+function normalizeProduct(product: ProductRecord): ProductRecord {
   return {
     ...product,
     images: product.images ?? [],
@@ -19,16 +27,12 @@ function normalizeProduct(product: Product): Product {
   };
 }
 
-function wrapProduct(product: Product): Product {
+function wrapProduct(product: ProductRecord): ProductRecord {
   return normalizeProduct(product);
 }
 
-const defaultProductInclude = {
-  availabilityTag: true,
-};
-
 export const productRepository = {
-  create(data: Prisma.ProductCreateInput): Promise<Product> {
+  create(data: Prisma.ProductUncheckedCreateInput): Promise<ProductRecord> {
     return prisma.product
       .create({
         data,
@@ -37,7 +41,7 @@ export const productRepository = {
       .then(wrapProduct);
   },
 
-  update(model: string, data: Prisma.ProductUpdateInput): Promise<Product> {
+  update(model: string, data: Prisma.ProductUncheckedUpdateInput): Promise<ProductRecord> {
     return prisma.product
       .update({
         where: { model },
@@ -47,7 +51,7 @@ export const productRepository = {
       .then(wrapProduct);
   },
 
-  delete(model: string): Promise<Product> {
+  delete(model: string): Promise<ProductRecord> {
     return prisma.product
       .delete({
         where: { model },
@@ -56,7 +60,7 @@ export const productRepository = {
       .then(wrapProduct);
   },
 
-  findUnique(model: string): Promise<Product | null> {
+  findUnique(model: string): Promise<ProductRecord | null> {
     return prisma.product
       .findUnique({
         where: { model },
@@ -65,7 +69,7 @@ export const productRepository = {
       .then((product) => (product ? normalizeProduct(product) : null));
   },
 
-  findMany(options: ProductFindManyOptions): Promise<{ products: Product[]; total: number }> {
+  findMany(options: ProductFindManyOptions): Promise<{ products: ProductRecord[]; total: number }> {
     const where: Prisma.ProductWhereInput = {};
     if (options.category) {
       where.category = options.category;
@@ -87,17 +91,15 @@ export const productRepository = {
       }
     }
 
-    const queryArgs: Prisma.ProductFindManyArgs = {
+    const queryArgs = Prisma.validator<Prisma.ProductFindManyArgs>()({
       where,
       orderBy: { model: "asc" },
       include: defaultProductInclude,
-    };
-    if (typeof options.offset === "number") {
-      queryArgs.skip = options.offset;
-    }
-    if (typeof options.limit === "number" && options.limit > 0) {
-      queryArgs.take = options.limit;
-    }
+      ...(typeof options.offset === "number" ? { skip: options.offset } : {}),
+      ...(typeof options.limit === "number" && options.limit > 0
+        ? { take: options.limit }
+        : {}),
+    });
 
     return Promise.all([
       prisma.product.findMany(queryArgs),

@@ -2,45 +2,38 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+const productSeedData = [
+  {
+    model: "CAMISETA-001",
+    name: "Camiseta básica",
+    priceCents: 2000,
+    category: "Ropa",
+    brand: "Marca propia",
+  },
+  {
+    model: "PANTALON-001",
+    name: "Pantalón clásico",
+    priceCents: 3500,
+    category: "Ropa",
+    brand: "Marca propia",
+  },
+  {
+    model: "ZAPATO-001",
+    name: "Zapato urbano",
+    priceCents: 5000,
+    category: "Calzado",
+    brand: "Marca urbana",
+  },
+];
+
 async function main(): Promise<void> {
-  await prisma.product.upsert({
-    where: { id: 1 },
-    update: {
-      name: "Camiseta",
-      priceCents: 200,
-    },
-    create: {
-      id: 1,
-      name: "Camiseta",
-      priceCents: 200,
-    },
-  });
-
-  await prisma.product.upsert({
-    where: { id: 2 },
-    update: {
-      name: "Pantalón",
-      priceCents: 350,
-    },
-    create: {
-      id: 2,
-      name: "Pantalón",
-      priceCents: 350,
-    },
-  });
-
-  await prisma.product.upsert({
-    where: { id: 3 },
-    update: {
-      name: "Zapatos",
-      priceCents: 500,
-    },
-    create: {
-      id: 3,
-      name: "Zapatos",
-      priceCents: 500,
-    },
-  });
+  for (const product of productSeedData) {
+    await prisma.product.upsert({
+      where: { model: product.model },
+      update: product,
+      create: product,
+    });
+  }
 
   console.log("Products seeded ✅");
 }

@@ -1,42 +1,48 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
-import { env } from "./env";
-import { prisma } from "./prisma";
-import authRouter from "./routes/auth";
-import productsRouter from "./routes/products";
-import cartRouter from "./routes/cart";
-import mediaRouter from "./routes/media";
-import availabilityRouter from "./routes/availability";
-import customersRouter from "./routes/customers";
-import { errorHandler } from "./middleware/errorHandler";
+import { prisma } from "./prisma.js";
+import authRouter from "./routes/auth.js";
+import productsRouter from "./routes/products.js";
+import cartRouter from "./routes/cart.js";
+import mediaRouter from "./routes/media.js";
+import availabilityRouter from "./routes/availability.js";
+import customersRouter from "./routes/customers.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 
 app.use(
   cors({
-    origin: env.WEB_ORIGIN,
+    origin: true,
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
+
 app.use("/auth", authRouter);
 app.use("/products", productsRouter);
 app.use("/cart", cartRouter);
 app.use("/media", mediaRouter);
 app.use("/availability", availabilityRouter);
 app.use("/customers", customersRouter);
+
 app.use(errorHandler);
 
 async function startServer() {
   try {
-    await prisma.$connect();
-    console.log("Prisma connected");
+    const PORT = Number(process.env.PORT) || 4000;
 
-    const server = app.listen(env.PORT, () => {
-      console.log(`Backend listening on http://localhost:${env.PORT}`);
+    const server = app.listen(PORT, () => {
+      console.log(`Backend running on port ${PORT}`);
     });
+
+    // 🔥 Prisma ya NO bloquea el arranque
+    prisma.$connect()
+      .then(() => console.log("Prisma connected"))
+      .catch((err) => console.error("Prisma connection failed:", err));
 
     const shutdown = async (signal: NodeJS.Signals) => {
       console.log(`Received ${signal}, shutting down`);
