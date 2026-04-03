@@ -14,7 +14,7 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-stone-100 text-stone-900">
-      <div className="mx-auto flex min-h-screen max-w-7xl">
+      <div className="flex min-h-screen w-full lg:mx-auto lg:max-w-7xl">
         <aside className="hidden w-72 shrink-0 border-r border-stone-200 bg-stone-950 px-6 py-8 text-stone-100 lg:block">
           <p className="text-xs uppercase tracking-[0.24em] text-stone-400">
             Aweshop MX
