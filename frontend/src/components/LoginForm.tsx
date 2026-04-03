@@ -43,6 +43,13 @@ export default function LoginForm() {
   return (
     <section className="mx-auto flex w-full max-w-md flex-1 items-center px-4 py-12">
       <div className="w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-6 flex justify-center">
+          <img
+            src="/aweshop-logo.jpg"
+            alt="AweShop"
+            className="h-20 w-auto rounded-xl border border-slate-200 object-cover shadow-sm"
+          />
+        </div>
         <h1 className="text-2xl font-semibold text-slate-900">Iniciar sesion</h1>
         <p className="mt-2 text-sm text-slate-600">
           Usa tu cuenta del backend para cargar carrito, ordenes y sesion por cookie.

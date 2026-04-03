@@ -72,15 +72,15 @@ export default function Home() {
     <main className="mx-auto flex min-h-[calc(100vh-4.75rem)] w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 sm:py-10">
       <header className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
-          Catalogo
+          Aweshop MX
         </p>
         <h1 className="mt-3 text-3xl font-semibold leading-tight text-slate-900 sm:text-4xl">
-          Colección activa
+          Catalogo privado
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-slate-600">
-          Selecciona lo que necesites y solicita el enlace de pago con o sin
-          envío directamente desde cada producto. Si tienes dudas, el botón de
-          WhatsApp te conecta con nosotros en segundos.
+          Explora sneakers y productos seleccionados. Si te interesa algo,
+          puedes solicitar el enlace de pago y resolver dudas directo por
+          WhatsApp.
         </p>
       </header>
 

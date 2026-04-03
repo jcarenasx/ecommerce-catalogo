@@ -17,9 +17,9 @@ export default function AdminLayout() {
       <div className="mx-auto flex min-h-screen max-w-7xl">
         <aside className="hidden w-72 shrink-0 border-r border-stone-200 bg-stone-950 px-6 py-8 text-stone-100 lg:block">
           <p className="text-xs uppercase tracking-[0.24em] text-stone-400">
-            Admin Panel
+            Aweshop MX
           </p>
-          <h1 className="mt-3 text-2xl font-semibold">Ecommerce Admin</h1>
+          <h1 className="mt-3 text-2xl font-semibold">Panel administrativo</h1>
           <nav className="mt-10 flex flex-col gap-2">
             <Link
               to="/admin/products"
@@ -79,10 +79,10 @@ export default function AdminLayout() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.24em] text-stone-500">
-                  Admin
+                  Aweshop MX
                 </p>
                 <h1 className="text-lg font-semibold text-stone-900">
-                  Catálogo privado
+                  Panel administrativo
                 </h1>
               </div>
               <button
