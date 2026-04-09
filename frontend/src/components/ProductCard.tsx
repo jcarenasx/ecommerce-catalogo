@@ -160,7 +160,7 @@ export default function ProductCard({ product }: ProductProps) {
         onKeyDown={handleCardKeyDown}
       >
         <div
-          className="group relative flex h-52 basis-3/4 items-center justify-center overflow-hidden rounded-t-2xl bg-white"
+          className="group relative flex h-40 basis-3/4 items-center justify-center overflow-hidden rounded-t-2xl bg-white sm:h-52"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -200,19 +200,19 @@ export default function ProductCard({ product }: ProductProps) {
           )}
         </div>
 
-        <div className="flex basis-1/4 flex-col gap-1 px-5 pb-5 pt-4">
-  <h3 className="text-base font-semibold text-slate-900">{displayName}</h3>
+        <div className="flex basis-1/4 flex-col gap-1 px-3 pb-4 pt-3 sm:px-5 sm:pb-5 sm:pt-4">
+  <h3 className="text-sm font-semibold text-slate-900 sm:text-base">{displayName}</h3>
 
   
 {product.availabilityTag && (
-  <p className="text-xs font-semibold text-slate-500 uppercase">
+  <p className="text-[10px] font-semibold text-slate-500 uppercase sm:text-xs">
   {product.availabilityTag.name}
 </p>
 )}
 
-  <p className="text-sm text-slate-600">Tallas: {sizeLabel}</p>
-  <p className="text-sm text-slate-600">Color: {colorLabel}</p>
-  <p className="text-sm font-semibold text-slate-900">
+  <p className="text-xs text-slate-600 sm:text-sm">Tallas: {sizeLabel}</p>
+  <p className="text-xs text-slate-600 sm:text-sm">Color: {colorLabel}</p>
+  <p className="text-xs font-semibold text-slate-900 sm:text-sm">
     Precio: {formatCurrency(product.priceCents ?? 0)}
   </p>
 </div>

@@ -69,18 +69,10 @@ export default function Home() {
   };
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-4.75rem)] w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 sm:py-10">
-      <header className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
-          Aweshop MX
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold leading-tight text-slate-900 sm:text-4xl">
-          Catalogo privado
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-slate-600">
-          Explora sneakers y productos seleccionados. Si te interesa algo,
-          puedes solicitar el enlace de pago y resolver dudas directo por
-          WhatsApp.
+    <main className="mx-auto flex min-h-[calc(100vh-4.75rem)] w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6 sm:py-8">
+      <header className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <p className="max-w-2xl text-sm text-slate-600">
+          Curaduria discreta de sneakers, bolsos y piezas seleccionadas.
         </p>
       </header>
 
@@ -160,7 +152,7 @@ export default function Home() {
       )}
 
     {!isLoading && !isError && filteredProducts.length > 0 && (
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
         {filteredProducts.map((product) => (
           <ProductCard key={product.model} product={product} />
         ))}
