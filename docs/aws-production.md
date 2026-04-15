@@ -1,9 +1,9 @@
 # Producción en AWS
 
-## Arquitectura actual recomendada
+## Arquitectura recomendada de bajo costo
 
 - `frontend`: AWS Amplify Hosting en `www.tudominio.com`
-- `backend`: AWS Elastic Beanstalk con `Application Load Balancer` en `api.tudominio.com`
+- `backend`: una sola instancia Linux o Elastic Beanstalk `single instance` en `api.tudominio.com`
 - `media`: bucket S3 para imágenes del catálogo
 - `cdn media`: CloudFront en `media.tudominio.com`
 - `dns`: Route 53
@@ -11,12 +11,12 @@
 
 ## Por qué esta ruta
 
-- ya tienes Elastic Beanstalk y ALB
-- te da HTTPS limpio sin tocar Nginx manualmente
-- te permite terminar rápido y reevaluar costos después
-- evita que mezclemos una migración de infraestructura con la salida a producción
+- elimina el costo fijo del `Application Load Balancer`
+- conserva una separación clara entre frontend, backend y base de datos
+- te deja crecer después a balanceador si el tráfico realmente lo pide
+- evita rehacer la aplicación para seguir avanzando
 
-## Backend en Elastic Beanstalk
+## Backend en instancia unica
 
 El backend ya quedó listo para:
 
@@ -31,22 +31,26 @@ Archivo de referencia:
 
 - [`backend/.env.example`](/Users/juancarlosarenasgutierrez/Documents/Projects/ecommerce-catalogo/backend/.env.example)
 
-## HTTPS con ALB
+## HTTPS sin ALB
 
-Elastic Beanstalk recomienda terminar HTTPS en el load balancer para entornos con ALB.
+Si quieres evitar el ALB, la forma más directa es terminar HTTPS dentro de la misma instancia con Nginx y reenviar a Node en `localhost:4000`.
 
 Pasos:
 
-1. Solicita un certificado en ACM para `api.tudominio.com`.
-2. En Elastic Beanstalk, abre la configuración del Load Balancer.
-3. Agrega el listener `443 HTTPS` con ese certificado.
-4. Mantén el tráfico del ALB hacia la app por `HTTP` interno.
-5. Apunta `api.tudominio.com` en Route 53 al ALB/entorno.
+1. Levanta el backend escuchando en `PORT=4000`.
+2. Instala y configura Nginx en la misma instancia para publicar `80` y `443`.
+3. Emite el certificado para `api.tudominio.com` con Let's Encrypt o tu proveedor preferido.
+4. Configura `proxy_pass` de Nginx hacia `http://127.0.0.1:4000`.
+5. Apunta `api.tudominio.com` en Route 53 a la IP pública o DNS de la instancia/entorno.
+6. Usa `TRUST_PROXY=1` para que Express respete correctamente `secure cookies` detrás de Nginx.
 
 Referencia de configuración:
 
 - [`backend/.ebextensions/01-process-health.config`](/Users/juancarlosarenasgutierrez/Documents/Projects/ecommerce-catalogo/backend/.ebextensions/01-process-health.config)
-- [`backend/.ebextensions/02-https-listener-alb.config.example`](/Users/juancarlosarenasgutierrez/Documents/Projects/ecommerce-catalogo/backend/.ebextensions/02-https-listener-alb.config.example)
+
+Nota:
+
+- [`backend/.ebextensions/02-https-listener-alb.config.example`](/Users/juancarlosarenasgutierrez/Documents/Projects/ecommerce-catalogo/backend/.ebextensions/02-https-listener-alb.config.example) queda solo como referencia legacy si en el futuro decides volver a usar ALB.
 
 ## Frontend en Amplify
 
@@ -118,3 +122,4 @@ Referencia:
 - `WEB_ORIGINS` refleja solo los dominios reales del frontend
 - imágenes nuevas suben a S3
 - catálogo real importado en la base productiva
+- no existe `Application Load Balancer` activo cobrando sin necesidad

@@ -1,6 +1,6 @@
 # Ecommerce Catalogo Deployment Notes
 
-Estas son las instrucciones clave para mantener en producción el backend (`api.aweshopmx.com`) y el frontend (`www.aweshopmx.com`).
+Estas son las instrucciones clave para mantener en producción el backend (`api.aweshopmx.com`) y el frontend (`www.aweshopmx.com`) con una arquitectura simple y de menor costo.
 
 ## Estado actual
 - Backend activo en `https://api.aweshopmx.com`
@@ -9,8 +9,9 @@ Estas son las instrucciones clave para mantener en producción el backend (`api.
 - Login/admin funcionando con sesión persistente
 - Subida de imágenes a S3 pendiente de terminar; por ahora se puede seguir usando URLs externas
 
-## Backend en Elastic Beanstalk
-- En `Configuration > Software` deben existir al menos estas variables:
+## Backend en instancia unica
+- El backend puede vivir en una sola instancia Linux o en un entorno `single instance` de Elastic Beanstalk, sin `Application Load Balancer`.
+- En el entorno deben existir al menos estas variables:
   - `NODE_ENV=production`
   - `DATABASE_URL=...`
   - `JWT_ACCESS_SECRET=...`
@@ -18,8 +19,8 @@ Estas son las instrucciones clave para mantener en producción el backend (`api.
   - `COOKIE_NAME=ecom_access`
   - `COOKIE_SECURE=true`
   - `COOKIE_SAME_SITE=none`
-  - `TRUST_PROXY=1`
-- El listener HTTPS se configura en EC2 > Load Balancers agregando `HTTPS:443`, usando certificado ACM y permitiendo `443` en el security group.
+  - `TRUST_PROXY=1` si usas Nginx o un proxy inverso delante de Node; `TRUST_PROXY=0` si expones Node directamente
+- Si quieres mantener HTTPS sin pagar ALB, termina SSL en Nginx dentro de la misma instancia y reenvia a Node por `localhost:4000`.
 - El health `https://api.aweshopmx.com/health` debe devolver `environment: "production"`.
 
 ## Frontend en Amplify
@@ -73,9 +74,16 @@ Estas son las instrucciones clave para mantener en producción el backend (`api.
 - El backend ya tiene soporte para S3 en código, pero la infraestructura todavía no quedó terminada.
 - Pendiente para otra sesión:
   1. Crear bucket S3
-  2. Dar permisos IAM al rol de Elastic Beanstalk
+  2. Dar permisos IAM al rol de la instancia o del entorno
   3. Configurar variables `S3_BUCKET_NAME`, `AWS_REGION`, `S3_KEY_PREFIX`, etc.
   4. Resolver por completo el flujo de upload y URL pública
+
+## Nota de costo
+- Si el objetivo es bajar gasto, la ruta recomendada es:
+  - frontend en Amplify
+  - backend en instancia unica
+  - base en RDS
+- El `Application Load Balancer` se puede retirar siempre que el backend quede accesible por un unico servidor y el HTTPS se resuelva dentro de la instancia.
 
 ## Nota importante
 - Si el frontend vuelve a quedar en blanco y en DevTools los archivos `index-*.js` o `index-*.css` salen con MIME `text/html`, el problema casi seguro es la regla de reescritura de Amplify y no el código del frontend.

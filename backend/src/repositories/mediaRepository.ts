@@ -1,18 +1,8 @@
-import fs from "fs";
-import path from "path";
 import { randomUUID } from "crypto";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import type { Express } from "express";
 import { env } from "../env.js";
 import { HttpError } from "../utils/httpError.js";
-
-const ensureUploadsDirectory = () => {
-  const uploadPath = env.UPLOAD_DIRECTORY_ABSOLUTE;
-  if (!fs.existsSync(uploadPath)) {
-    fs.mkdirSync(uploadPath, { recursive: true });
-  }
-  return uploadPath;
-};
 
 const s3Client = env.S3_BUCKET_NAME
   ? new S3Client({
@@ -80,18 +70,25 @@ function assertValidFile(file: Pick<Express.Multer.File, "mimetype" | "size" | "
   }
 }
 
-async function saveToLocalStorage(file: Express.Multer.File) {
-  const uploadDir = ensureUploadsDirectory();
-  const sanitized = sanitizeFilename(file.originalname);
-  const filename = `${Date.now()}-${randomUUID()}-${sanitized}`;
-  const filepath = path.join(uploadDir, filename);
-  await fs.promises.writeFile(filepath, file.buffer);
-  return `/uploads/${filename}`;
+function assertS3Configured() {
+  if (!env.S3_BUCKET_NAME || !s3Client) {
+    throw new HttpError(
+      500,
+      "S3_NOT_CONFIGURED",
+      "La subida de imágenes requiere una configuración válida de S3."
+    );
+  }
 }
 
 async function saveToS3(file: Express.Multer.File) {
-  if (!s3Client || !env.S3_BUCKET_NAME) {
-    throw new Error("S3 client is not configured.");
+  assertS3Configured();
+
+  if (!file.buffer || file.buffer.length === 0) {
+    throw new HttpError(
+      400,
+      "EMPTY_FILE",
+      `El archivo "${file.originalname}" llegó vacío o no se pudo leer correctamente.`
+    );
   }
 
   const sanitized = sanitizeFilename(file.originalname);
@@ -103,6 +100,7 @@ async function saveToS3(file: Express.Multer.File) {
       Bucket: env.S3_BUCKET_NAME,
       Key: key,
       Body: file.buffer,
+      ContentLength: file.size,
       ContentType: file.mimetype,
       CacheControl: "public, max-age=31536000, immutable",
     })
@@ -113,13 +111,13 @@ async function saveToS3(file: Express.Multer.File) {
 
 export const mediaRepository = {
   async saveFiles(files: Express.Multer.File[]): Promise<string[]> {
+    assertS3Configured();
+
     const urls: string[] = [];
 
     for (const file of files) {
       assertValidFile(file);
-      const url = env.S3_BUCKET_NAME
-        ? await saveToS3(file)
-        : await saveToLocalStorage(file);
+      const url = await saveToS3(file);
       urls.push(url);
     }
 

@@ -4,14 +4,14 @@
 
 Terminar rápido con la infraestructura que ya tienes:
 
-- Backend en Elastic Beanstalk detrás de ALB
+- Backend en una sola instancia o Elastic Beanstalk `single instance`
 - Frontend en Amplify
 - HTTPS en `api.tudominio.com`
 - Cookies funcionando sin depender para siempre de `SameSite=None`
 
 ## Orden recomendado
 
-1. Configura `api.tudominio.com` en Elastic Beanstalk con ACM + ALB.
+1. Configura `api.tudominio.com` apuntando a una sola instancia sin ALB.
 2. Verifica `https://api.tudominio.com/health`.
 3. Mientras frontend siga en Vercel, usa:
    - `COOKIE_SAME_SITE=none`
@@ -31,3 +31,4 @@ Terminar rápido con la infraestructura que ya tienes:
 - peticiones autenticadas funcionan con `withCredentials`
 - `GET /health` responde `200`
 - subida de imágenes devuelve URLs finales de S3 o CDN
+- no hay `Application Load Balancer` activo
